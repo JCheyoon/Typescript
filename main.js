@@ -104,3 +104,85 @@ const result = jsStringFunc();
 //type 이 any여서 string.length를 못씀. 이럴경우 string 이라고 CASTING 해서 ( 내가맞다고 주장) 해서 사용가능
 console.log((result as string).length);
 */
+var BeansGram_PerShot = 7;
+var coffeeBeans = 0;
+// public <-기본값, private <-외부에서 볼수도 없고 접근불가, protected <- 외부에서 접근불가지만 이클래스를 상속한 자식은 접근가능
+var CoffeeMaker = /** @class */ (function () {
+    function CoffeeMaker(beans) {
+        this.coffeeBeans = 0; // instance (object) level
+        this.coffeeBeans = beans;
+    }
+    CoffeeMaker.makeMachine = function (coffeeBeans) {
+        return new CoffeeMaker(coffeeBeans);
+    };
+    CoffeeMaker.prototype.fillCoffeeBeans = function (beans) {
+        if (beans < 0) {
+            throw new Error("Value for beans should be greater than 0");
+        }
+        this.coffeeBeans += beans;
+    };
+    CoffeeMaker.prototype.makeCoffee = function (shots) {
+        if (this.coffeeBeans < shots * CoffeeMaker.BeansGram_PerShot) {
+            throw new Error("Not enough coffee beans");
+        }
+        this.coffeeBeans -= shots * CoffeeMaker.BeansGram_PerShot;
+        return {
+            shots: shots,
+            hasMilk: false
+        };
+    };
+    CoffeeMaker.BeansGram_PerShot = 7; //class level
+    return CoffeeMaker;
+}());
+var maker = CoffeeMaker.makeMachine(4);
+maker.fillCoffeeBeans(33);
+//getter and setter 멤버변수로 사용할수 있고 유용
+/*
+class User {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  constructor(firstName: string, lastName: string) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.fullName = `${firstName} ${lastName}`;
+  }
+}
+const user = new User("Peter", "kin");
+console.log(user.fullName); // peter kin
+user.firstName = "cheyoon" //<==get set없인 이렇게 변경해도 바뀌지 않음
+console.log(user.fullName); // peter kin
+
+ */
+var User = /** @class */ (function () {
+    function User(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.internalAge = 4;
+    }
+    Object.defineProperty(User.prototype, "fullName", {
+        get: function () {
+            return "".concat(this.firstName, " ").concat(this.lastName);
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(User.prototype, "age", {
+        get: function () {
+            return this.internalAge;
+        },
+        set: function (num) {
+            if (num < 0) {
+                throw new Error("age should be greater than 0");
+            }
+            this.internalAge = num;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    return User;
+}());
+var user = new User("Peter", "kin");
+console.log(user.fullName); // peter kin
+user.firstName = "cheyoon";
+console.log(user.fullName); //cheyoon kin

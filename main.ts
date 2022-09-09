@@ -104,3 +104,145 @@ const result = jsStringFunc();
 //type 이 any여서 string.length를 못씀. 이럴경우 string 이라고 CASTING 해서 ( 내가맞다고 주장) 해서 사용가능
 console.log((result as string).length);
 */
+
+//imperative and procedural programming 명령절차지향적
+/*
+type CoffeeCup = {
+  shots: number;
+  hasMilk: boolean;
+};
+const BeansGram_PerShot = 7;
+
+let coffeeBeans: number = 0;
+
+function makeCoffee(shots: number): CoffeeCup {
+  if (coffeeBeans < shots * BeansGram_PerShot) {
+    throw new Error("Not enough coffee beans");
+  }
+  coffeeBeans -= shots * BeansGram_PerShot;
+  return {
+    shots: shots,
+    hasMilk: false,
+  };
+}
+coffeeBeans += 3 * BeansGram_PerShot;
+
+const coffee = makeCoffee(2);
+console.log(coffee);
+
+
+//OOP
+//class 안에있는 변수에 접근할때는 this 붙여야한다, Static으로 지정된 변수는 this대신에 class이름을 쓴다
+class CoffeeMaker {
+  static BeansGram_PerShot = 7; //class level
+  coffeeBeans: number = 0; // instance (object) level
+
+  constructor(beans: number) {
+    this.coffeeBeans = beans;
+  }
+  static makeMachine(coffeeBeans: number): CoffeeMaker {
+    return new CoffeeMaker(coffeeBeans);
+  }
+
+  makeCoffee(shots: number): CoffeeCup {
+    if (this.coffeeBeans < shots * CoffeeMaker.BeansGram_PerShot) {
+      throw new Error("Not enough coffee beans");
+    }
+    this.coffeeBeans -= shots * CoffeeMaker.BeansGram_PerShot;
+    return {
+      shots: shots,
+      hasMilk: false,
+    };
+  }
+}
+//new -> class의 instance를 만든다
+const maker = new CoffeeMaker(2);
+console.log(maker);
+
+CoffeeMaker.makeMachine(2);
+*/
+
+//Encapsulation
+
+type CoffeeCup = {
+  shots: number;
+  hasMilk: boolean;
+};
+
+const BeansGram_PerShot = 7;
+
+let coffeeBeans: number = 0;
+
+// public <-기본값, private <-외부에서 볼수도 없고 접근불가, protected <- 외부에서 접근불가지만 이클래스를 상속한 자식은 접근가능
+class CoffeeMaker {
+  private static BeansGram_PerShot = 7; //class level
+  private coffeeBeans: number = 0; // instance (object) level
+
+  private constructor(beans: number) {
+    this.coffeeBeans = beans;
+  }
+  static makeMachine(coffeeBeans: number): CoffeeMaker {
+    return new CoffeeMaker(coffeeBeans);
+  }
+  fillCoffeeBeans(beans: number) {
+    if (beans < 0) {
+      throw new Error("Value for beans should be greater than 0");
+    }
+    this.coffeeBeans += beans;
+  }
+
+  makeCoffee(shots: number): CoffeeCup {
+    if (this.coffeeBeans < shots * CoffeeMaker.BeansGram_PerShot) {
+      throw new Error("Not enough coffee beans");
+    }
+    this.coffeeBeans -= shots * CoffeeMaker.BeansGram_PerShot;
+    return {
+      shots: shots,
+      hasMilk: false,
+    };
+  }
+}
+const maker = CoffeeMaker.makeMachine(4);
+maker.fillCoffeeBeans(33);
+
+//getter and setter 멤버변수로 사용할수 있고 유용
+
+/*
+class User {
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  constructor(firstName: string, lastName: string) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.fullName = `${firstName} ${lastName}`;
+  }
+}
+const user = new User("Peter", "kin");
+console.log(user.fullName); // peter kin
+user.firstName = "cheyoon" //<==get set없인 이렇게 변경해도 바뀌지 않음
+console.log(user.fullName); // peter kin
+
+ */
+
+class User {
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
+  private internalAge = 4;
+  get age(): number {
+    return this.internalAge;
+  }
+  set age(num: number) {
+    if (num < 0) {
+      throw new Error("age should be greater than 0");
+    }
+    this.internalAge = num;
+  }
+
+  constructor(public firstName: string, private lastName: string) {}
+}
+const user = new User("Peter", "kin");
+console.log(user.fullName); // peter kin
+user.firstName = "cheyoon";
+console.log(user.fullName); //cheyoon kin
