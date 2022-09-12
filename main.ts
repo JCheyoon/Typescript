@@ -169,21 +169,28 @@ type CoffeeCup = {
   hasMilk: boolean;
 };
 
+interface CoffeeMaker {
+  makeCoffee(shots: number): CoffeeCup;
+}
+
 const BeansGram_PerShot = 7;
 
 let coffeeBeans: number = 0;
 
 // public <-기본값, private <-외부에서 볼수도 없고 접근불가, protected <- 외부에서 접근불가지만 이클래스를 상속한 자식은 접근가능
-class CoffeeMaker {
+
+class CoffeeMachine implements CoffeeMaker {
   private static BeansGram_PerShot = 7; //class level
   private coffeeBeans: number = 0; // instance (object) level
 
   private constructor(beans: number) {
     this.coffeeBeans = beans;
   }
-  static makeMachine(coffeeBeans: number): CoffeeMaker {
-    return new CoffeeMaker(coffeeBeans);
+
+  static makeMachine(coffeeBeans: number): CoffeeMachine {
+    return new CoffeeMachine(coffeeBeans);
   }
+
   fillCoffeeBeans(beans: number) {
     if (beans < 0) {
       throw new Error("Value for beans should be greater than 0");
@@ -191,58 +198,31 @@ class CoffeeMaker {
     this.coffeeBeans += beans;
   }
 
-  makeCoffee(shots: number): CoffeeCup {
-    if (this.coffeeBeans < shots * CoffeeMaker.BeansGram_PerShot) {
+  private grindBeans(shots: number) {
+    console.log(`grinding beans for ${shots}`);
+    if (this.coffeeBeans < shots * CoffeeMachine.BeansGram_PerShot) {
       throw new Error("Not enough coffee beans");
     }
-    this.coffeeBeans -= shots * CoffeeMaker.BeansGram_PerShot;
+    this.coffeeBeans -= shots * CoffeeMachine.BeansGram_PerShot;
+  }
+  private preheat(): void {
+    console.log("heating up");
+  }
+
+  private extract(shots: number): CoffeeCup {
+    console.log(`pulling ${shots} shots`);
     return {
       shots: shots,
       hasMilk: false,
     };
   }
-}
-const maker = CoffeeMaker.makeMachine(4);
-maker.fillCoffeeBeans(33);
 
-//getter and setter 멤버변수로 사용할수 있고 유용
-
-/*
-class User {
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  constructor(firstName: string, lastName: string) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.fullName = `${firstName} ${lastName}`;
+  makeCoffee(shots: number): CoffeeCup {
+    this.grindBeans(shots);
+    this.preheat();
+    return this.extract(shots);
   }
 }
-const user = new User("Peter", "kin");
-console.log(user.fullName); // peter kin
-user.firstName = "cheyoon" //<==get set없인 이렇게 변경해도 바뀌지 않음
-console.log(user.fullName); // peter kin
 
- */
-
-class User {
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-  private internalAge = 4;
-  get age(): number {
-    return this.internalAge;
-  }
-  set age(num: number) {
-    if (num < 0) {
-      throw new Error("age should be greater than 0");
-    }
-    this.internalAge = num;
-  }
-
-  constructor(public firstName: string, private lastName: string) {}
-}
-const user = new User("Peter", "kin");
-console.log(user.fullName); // peter kin
-user.firstName = "cheyoon";
-console.log(user.fullName); //cheyoon kin
+const maker = CoffeeMachine.makeMachine(3);
+maker.makeCoffee(23);
