@@ -227,6 +227,7 @@ CoffeeMaker.makeMachine(2);
 // const maker = CoffeeMachine.makeMachine(3);
 // maker.makeCoffee(23);
 
+/*
 //inheritance
 type CoffeeCup = {
   shots: number;
@@ -336,3 +337,39 @@ const milkMaker = new MilkSteamer();
 //
 const machine = new CoffeeMachine(23);
 const latteMachine = new CaffeLatteMachine(12, milkMaker);
+*/
+
+type PositionType = {
+  x: number;
+  y: number;
+};
+interface PositionInterface {
+  x: number;
+  y: number;
+}
+
+//obj
+const ob1: PositionType = {
+  x: 1,
+  y: 1,
+};
+const obj2: PositionInterface = {
+  x: 1,
+  y: 1,
+};
+
+//class
+class Pos1 implements PositionType {
+  x: number;
+  y: number;
+}
+class Pos2 implements PositionInterface {
+  x: number;
+  y: number;
+}
+
+//extend
+interface ZPosition extends PositionInterface {
+  z: number;
+}
+type ZPositonType = PositionType & { z: number };
