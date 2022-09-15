@@ -339,6 +339,8 @@ const machine = new CoffeeMachine(23);
 const latteMachine = new CaffeLatteMachine(12, milkMaker);
 */
 
+/*
+//index
 type PositionType = {
   x: number;
   y: number;
@@ -373,3 +375,110 @@ interface ZPosition extends PositionInterface {
   z: number;
 }
 type ZPositonType = PositionType & { z: number };
+*/
+
+//map type
+
+type Video = {
+  title: string;
+  author: string;
+};
+//[1,2].map(item=>item*item) -> [1,4]
+
+type Optional<T> = {
+  [P in keyof T]?: T[P];
+};
+
+type Animal = {
+  name: string;
+  age: number;
+};
+const animal: Optional<Animal> = {
+  name: "dog",
+};
+
+//condition type
+
+type Check<T> = T extends string ? boolean : number; //기존에 주어진 T 타입이 문자열을 상속한다면 boolean 으로 결정 아니라면 number
+type Type = Check<string>; // ->Boolean
+
+//read only
+type ToDo = {
+  title: string;
+  description: string;
+  label: string;
+  priority: "high" | "low";
+};
+function display(todo: Readonly<ToDo>) {}
+//partial type
+function updateTodo(todo: ToDo, fieldsToUpdate: Partial<ToDo>): ToDo {
+  return { ...todo, ...fieldsToUpdate };
+}
+const todo: ToDo = {
+  title: "learn",
+  description: "study",
+  label: "study",
+  priority: "high",
+};
+const updated = updateTodo(todo, { priority: "low" });
+
+//pick
+type Video2 = {
+  id: string;
+  title: string;
+  url: string;
+  data: string;
+};
+
+type VideoMetaData = Pick<Video2, "id" | "title">;
+function getVideo(id: string): Video2 {
+  return {
+    id,
+    title: "video",
+    url: "http",
+    data: "byte",
+  };
+}
+function getVideoMetaData(id: string): VideoMetaData {
+  return {
+    id: id,
+    title: "title",
+  };
+}
+//기존에있는 비디오에서 아이디 타이틀만이용
+
+//omit
+
+type tape = {
+  id: string;
+  title: string;
+  url: string;
+  data: string;
+};
+
+type TapeMetaData = Omit<Video2, "url" | "data">;
+function getTape(id: string): Video2 {
+  return {
+    id,
+    title: "video",
+    url: "http",
+    data: "byte",
+  };
+}
+function getTapeMetaData(id: string): TapeMetaData {
+  return {
+    id: id,
+    title: "title",
+  };
+}
+
+//record
+type Page = {
+  title: string;
+};
+type Info = "home" | "about" | "contact";
+
+const nav: Record<Info, Page> = {
+  home: { title: "home" },
+  about: { title: "about" },
+};
